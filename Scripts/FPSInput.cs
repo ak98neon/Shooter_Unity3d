@@ -18,9 +18,12 @@ public class FPSInput : MonoBehaviour {
     [SerializeField]
     private float forceJump = 10.0f; //Сила прыжка
 
-    #region Animation
-    private Animation anim; //Активация анмицаии на игроке
-    public AnimationClip move; //Анимация ходьбы прямо
+    #region Animator
+    private Animator _animator;
+    private float _idleAnimator = 0.0f;
+    private float _hodbaAnimator = 1.0f;
+    private float _begAnimator = 2.0f;
+    private float _jumpAnimator = 3.0f;
     #endregion
 
     #region MovePlayer_CharController
@@ -32,8 +35,7 @@ public class FPSInput : MonoBehaviour {
     void Start () {
         movement = new Vector3(0, 0, 0);
 
-        anim = GetComponent<Animation>();
-        anim.wrapMode = WrapMode.Loop;
+        _animator = GetComponent<Animator>();
 
         _charController = GetComponent<CharacterController>();
         speed = spawnSpeed;
@@ -49,15 +51,14 @@ public class FPSInput : MonoBehaviour {
         if (Input.GetKey(KeyCode.W))
         {
             charControllerMove(Vector3.forward);
-            anim.Play("moveAnimation");
+            _animator.SetFloat("Speed", _hodbaAnimator);
         }
         else if (Input.GetKey(KeyCode.S))
         {
             charControllerMove(Vector3.back);
-            anim.Play("moveAnimation");
         } else
         {
-            anim.Stop();
+            _animator.SetFloat("Speed", _idleAnimator);
         }
 
         if (Input.GetKey(KeyCode.A))
@@ -74,9 +75,11 @@ public class FPSInput : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            _animator.SetFloat("Speed", _jumpAnimator);
             jumpCharacterController(forceJump * 30);
         } else
         {
+            //_animator.SetFloat("Speed", _idleAnimator);
             jumpCharacterController(-gravity);
         }
     }
@@ -101,10 +104,12 @@ public class FPSInput : MonoBehaviour {
     {
         if (Input.GetKey(KeyCode.LeftShift))
         {
+            _animator.SetFloat("Speed", _begAnimator);
             speed = boostSpeed;
         }
         else if (!Input.GetKey(KeyCode.LeftShift))
         {
+            //_animator.SetFloat("Speed", _idleAnimator);
             speed = spawnSpeed;
         }
     }
